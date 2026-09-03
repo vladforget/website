@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Звуки кнопок — конструктор</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#ffffff;--surface:#f1f3f7;--line:#e3e6ec;--accent:#2f6bff;--accent-soft:#e4ecff;--muted:#6b7280;--ink:#111318;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;min-height:100vh;padding:30px 20px 60px;}
+  .wrap{max-width:780px;margin:0 auto}
+  h1{font-size:24px;font-weight:700;margin-bottom:6px}
+  .sub{color:var(--muted);font-size:14px;line-height:1.5;margin-bottom:22px}
+  .sub b{color:var(--accent)}
+  .cat{margin:26px 0 12px;font-size:13px;font-weight:600;letter-spacing:1.1px;text-transform:uppercase;color:var(--muted)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+  .card .num{color:var(--accent);font-weight:700;font-size:12px;letter-spacing:.5px}
+  .card .name{font-size:15px;font-weight:600}
+  .card .desc{color:var(--muted);font-size:12px;line-height:1.4;min-height:32px}
+  .row{display:flex;gap:8px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:40px;border:none;border-radius:10px;cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:600;transition:opacity .15s,transform .06s}
+  .btn:active{transform:scale(.96)}
+  .btn.primary{background:var(--accent);color:#fff;flex:1}
+  .btn.primary:hover{opacity:.9}
+  .btn.ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line);padding:0 12px}
+  .btn.ghost:hover{background:#e9edf5}
+  .btn svg{width:14px;height:14px}
+
+  /* ---------- Конструктор ---------- */
+  .builder{background:linear-gradient(180deg,#f7f9ff,#eef2fb);border:1px solid #d7e0f5;border-radius:18px;padding:20px;margin-bottom:8px}
+  .builder h2{font-size:17px;font-weight:700;margin-bottom:4px}
+  .builder .note{color:var(--muted);font-size:13px;margin-bottom:16px;line-height:1.45}
+  .waves{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .wave{flex:1;min-width:90px;height:40px;border:1px solid var(--line);background:#fff;border-radius:10px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:var(--ink);transition:.15s}
+  .wave.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .ctl{margin-bottom:14px}
+  .ctl label{display:flex;justify-content:space-between;font-size:13px;font-weight:500;margin-bottom:6px}
+  .ctl label b{color:var(--accent);font-weight:700}
+  input[type=range]{width:100%;accent-color:var(--accent);height:4px}
+  .readout{background:#0e1730;color:#cfe0ff;border-radius:10px;padding:12px 14px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;margin:16px 0 6px;word-break:break-word}
+  .readout b{color:#fff}
+  .hint{color:var(--muted);font-size:12.5px;line-height:1.45}
+  .hint b{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Звуки кнопок — послушай и собери свой</h1>
+  <p class="sub">Ниже — конструктор (крути параметры и слушай) и готовые пресеты, включая <b>звуки в стиле Apple</b>. Понравился пресет — жми «→ в конструктор», подправь при желании и пришли мне <b>итоговые настройки</b> из чёрной строки (или просто номер пресета).</p>
+
+  <!-- ================= КОНСТРУКТОР ================= -->
+  <div class="builder">
+    <h2>🎛 Конструктор звука</h2>
+    <p class="note">Собери звук под себя. Это простой тон (как у кнопок/переключателей) — то, что обычно и ставят на нажатия.</p>
+
+    <div class="waves" id="waves">
+      <button class="wave on" data-w="sine">Sine</button>
+      <button class="wave" data-w="triangle">Triangle</button>
+      <button class="wave" data-w="square">Square</button>
+      <button class="wave" data-w="sawtooth">Saw</button>
+    </div>
+
+    <div class="ctl">
+      <label>Частота, старт <b><span id="v-f1">700</span> Гц</b></label>
+      <input type="range" id="f1" min="80" max="2000" step="10" value="700">
+    </div>
+    <div class="ctl">
+      <label>Частота, конец <b><span id="v-f2">920</span> Гц</b></label>
+      <input type="range" id="f2" min="80" max="2000" step="10" value="920">
+    </div>
+    <div class="ctl">
+      <label>Длительность <b><span id="v-dur">60</span> мс</b></label>
+      <input type="range" id="dur" min="20" max="500" step="5" value="60">
+    </div>
+    <div class="ctl">
+      <label>Громкость <b><span id="v-vol">0.10</span></b></label>
+      <input type="range" id="vol" min="2" max="30" step="1" value="10">
+    </div>
+
+    <div class="row">
+      <button class="btn primary" id="playBuilder"><svg viewBox="0 0 24 24" fill="none"><path d="M7 5l12 7-12 7V5z" fill="#fff"/></svg> Играть</button>
+    </div>
+
+    <div class="readout" id="readout"></div>
+    <p class="hint">Скопируй эту строку и пришли мне — поставлю точь-в-точь. <b>Сейчас на сайте:</b> sine · 700→920 Гц · 60 мс · громкость 0.10 (пресет «Радио-выбор»).</p>
+  </div>
+
+  <div id="root"></div>
+</div>
+
+<script>
+  var ctx=null,master=null;
+  function AC(){ if(!ctx){ var C=window.AudioContext||window.webkitAudioContext; ctx=new C(); master=ctx.createGain(); master.gain.value=0.9; master.connect(ctx.destination);} if(ctx.state==='suspended') ctx.resume(); return ctx; }
+
+  // единичный тон по параметрам {type,f1,f2,dur(ms),vol}
+  function playParams(p){
+    var c=AC(),t=c.currentTime,dur=p.dur/1000,o=c.createOscillator(),g=c.createGain();
+    o.type=p.type; o.frequency.setValueAtTime(p.f1,t);
+    if(p.f2 && p.f2!==p.f1) o.frequency.exponentialRampToValueAtTime(Math.max(1,p.f2),t+dur);
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(p.vol,t+0.006);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.connect(g);g.connect(master);o.start(t);o.stop(t+dur+0.02);
+  }
+  function beep(f1,f2,type,dur,vol,when){ playParamsAt({type:type||'sine',f1:f1,f2:f2||f1,dur:dur*1000,vol:vol},when); }
+  function playParamsAt(p,when){
+    var c=AC(),t=when||c.currentTime,dur=p.dur/1000,o=c.createOscillator(),g=c.createGain();
+    o.type=p.type;o.frequency.setValueAtTime(p.f1,t);
+    if(p.f2&&p.f2!==p.f1)o.frequency.exponentialRampToValueAtTime(Math.max(1,p.f2),t+dur);
+    g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(p.vol,t+0.006);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.connect(g);g.connect(master);o.start(t);o.stop(t+dur+0.02);
+  }
+  function noise(dur,vol,ftype,freq,Q,when){
+    var c=AC(),t=when||c.currentTime,n=Math.max(1,Math.floor(c.sampleRate*dur)),buf=c.createBuffer(1,n,c.sampleRate),d=buf.getChannelData(0);
+    for(var i=0;i<n;i++) d[i]=(Math.random()*2-1)*(1-i/n);
+    var s=c.createBufferSource();s.buffer=buf;var f=c.createBiquadFilter();f.type=ftype||'bandpass';f.frequency.value=freq||2000;f.Q.value=Q||0.8;
+    var g=c.createGain();g.gain.value=vol;s.connect(f);f.connect(g);g.connect(master);s.start(t);
+  }
+  function swoosh(up,dur,vol){
+    var c=AC(),t=c.currentTime,n=Math.floor(c.sampleRate*dur),buf=c.createBuffer(1,n,c.sampleRate),d=buf.getChannelData(0);
+    for(var i=0;i<n;i++) d[i]=(Math.random()*2-1);
+    var s=c.createBufferSource();s.buffer=buf;var f=c.createBiquadFilter();f.type='bandpass';f.Q.value=1.2;
+    var a=up?400:1700,b=up?2600:450;f.frequency.setValueAtTime(a,t);f.frequency.exponentialRampToValueAtTime(b,t+dur);
+    var g=c.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+dur*0.3);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    s.connect(f);f.connect(g);g.connect(master);s.start(t);
+  }
+  function seq(arr){ var t0=AC().currentTime; arr.forEach(function(n){ playParamsAt({type:n[2]||'sine',f1:n[0],f2:n[1]||n[0],dur:n[3]*1000,vol:n[4]||0.1},t0+n[5]); }); }
+
+  // ---------- Конструктор ----------
+  var state={type:'sine',f1:700,f2:920,dur:60,vol:0.10};
+  function fmt(){ return state.type+' · '+state.f1+'→'+state.f2+' Гц · '+state.dur+' мс · громкость '+state.vol.toFixed(2); }
+  function updateReadout(){ document.getElementById('readout').innerHTML='<b>Твои настройки:</b> '+fmt(); }
+  function setWave(w){ state.type=w; document.querySelectorAll('.wave').forEach(function(b){ b.classList.toggle('on',b.dataset.w===w); }); updateReadout(); }
+  document.querySelectorAll('.wave').forEach(function(b){ b.addEventListener('click',function(){ setWave(b.dataset.w); playParams(state); }); });
+  function bind(id,key,disp,scale){
+    var el=document.getElementById(id),out=document.getElementById('v-'+id);
+    el.addEventListener('input',function(){
+      var raw=parseFloat(el.value); state[key]= scale? raw*scale : raw;
+      out.textContent = key==='vol'? state.vol.toFixed(2) : state[key];
+      updateReadout();
+    });
+    el.addEventListener('change',function(){ playParams(state); });
+  }
+  bind('f1','f1'); bind('f2','f2'); bind('dur','dur'); bind('vol','vol',null,0.01);
+  document.getElementById('playBuilder').addEventListener('click',function(){ playParams(state); });
+  function loadToBuilder(p){
+    state={type:p.type,f1:p.f1,f2:p.f2,dur:p.dur,vol:p.vol};
+    document.getElementById('f1').value=p.f1; document.getElementById('v-f1').textContent=p.f1;
+    document.getElementById('f2').value=p.f2; document.getElementById('v-f2').textContent=p.f2;
+    document.getElementById('dur').value=p.dur; document.getElementById('v-dur').textContent=p.dur;
+    document.getElementById('vol').value=Math.round(p.vol*100); document.getElementById('v-vol').textContent=p.vol.toFixed(2);
+    setWave(p.type); updateReadout(); playParams(p);
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  updateReadout();
+
+  // ---------- Пресеты ----------
+  // p = параметры для конструктора (одиночный тон); play = как проигрывать (может быть составным)
+  var DATA=[
+    {cat:'В стиле Apple', items:[
+      {name:'Tock (пикер)', desc:'Сухой «tock» колёсика выбора.', play:function(){ noise(0.03,0.22,'lowpass',600,1); beep(180,150,'sine',0.06,0.12); }},
+      {name:'Клавиша iOS', desc:'Тихий тик клавиатуры.', p:{type:'sine',f1:1200,f2:1200,dur:30,vol:0.06}},
+      {name:'Tri-tone', desc:'Две «маримбовые» ноты — как уведомление.', play:function(){ seq([[1318,1318,'triangle',0.16,0.11,0],[988,988,'triangle',0.26,0.11,0.13]]); }},
+      {name:'Glass (динь)', desc:'Стеклянный звонкий сигнал.', play:function(){ beep(1046,1046,'sine',0.5,0.08); beep(1568,1568,'sine',0.5,0.035); }},
+      {name:'Note (отправка)', desc:'Взлетающий свуш «улетело».', play:function(){ swoosh(true,0.26,0.12); }},
+      {name:'Bloom', desc:'Мягкий распускающийся аккорд.', play:function(){ seq([[523,523,'sine',0.5,0.07,0],[784,784,'sine',0.5,0.06,0.05],[1046,1046,'sine',0.5,0.05,0.1]]); }},
+      {name:'Зарядка', desc:'Двухнотный «подключено».', play:function(){ seq([[660,660,'sine',0.12,0.1,0],[990,990,'sine',0.18,0.1,0.09]]); }},
+      {name:'Камера', desc:'Короткий щелчок затвора.', play:function(){ noise(0.02,0.3,'bandpass',2200,0.6); noise(0.05,0.15,'lowpass',900,1,0.03); }},
+      {name:'Разблокировка', desc:'Мягкий двойной клик.', play:function(){ noise(0.02,0.2,'bandpass',1500,1); setTimeout(function(){noise(0.02,0.16,'bandpass',1100,1);},50); }},
+      {name:'Crystal', desc:'Яркий кристальный блик.', play:function(){ beep(1760,1760,'sine',0.35,0.07); beep(2637,2637,'sine',0.3,0.03); }}
+    ]},
+    {cat:'Тапы и клики', items:[
+      {name:'Мягкий поп', desc:'Тёплый короткий «поп».', p:{type:'sine',f1:320,f2:170,dur:140,vol:0.14}},
+      {name:'Тап', desc:'Ровный мягкий тап.', p:{type:'sine',f1:520,f2:520,dur:80,vol:0.11}},
+      {name:'Мягкий тук', desc:'Округлый низкий «тук».', p:{type:'triangle',f1:300,f2:255,dur:100,vol:0.13}},
+      {name:'Клавиша', desc:'Сухой тик клавиатуры.', play:function(){ noise(0.02,0.22,'highpass',3200,0.7); }},
+      {name:'Механический клик', desc:'Чёткий клик кнопки.', play:function(){ noise(0.02,0.28,'bandpass',1400,0.9); beep(900,700,'square',0.03,0.03); }}
+    ]},
+    {cat:'Переключатели и выбор', items:[
+      {name:'Радио-выбор ✓', desc:'Стоит на сайте сейчас.', p:{type:'sine',f1:700,f2:920,dur:60,vol:0.10}},
+      {name:'Тумблер вкл', desc:'Щелчок + тон вверх.', play:function(){ noise(0.02,0.2,'bandpass',1600,1); beep(500,780,'triangle',0.07,0.07); }},
+      {name:'Тумблер выкл', desc:'Щелчок + тон вниз.', play:function(){ noise(0.02,0.2,'bandpass',1200,1); beep(640,360,'triangle',0.07,0.07); }},
+      {name:'Чекбокс', desc:'Лёгкая «галочка».', p:{type:'sine',f1:1250,f2:1250,dur:40,vol:0.07}},
+      {name:'Бип', desc:'Ровный округлый «буп».', p:{type:'sine',f1:660,f2:660,dur:120,vol:0.12}}
+    ]},
+    {cat:'Успех и подтверждение', items:[
+      {name:'Успех ↑', desc:'Две ноты вверх — «ок».', play:function(){ seq([[660,660,'sine',0.1,0.11,0],[990,990,'sine',0.14,0.1,0.09]]); }},
+      {name:'Готово (3 ноты)', desc:'Восходящее арпеджио C-E-G.', play:function(){ seq([[523,523,'sine',0.1,0.1,0],[659,659,'sine',0.1,0.1,0.08],[784,784,'sine',0.18,0.1,0.16]]); }},
+      {name:'Ошибка ↓', desc:'Две ноты вниз — мягкий отказ.', play:function(){ seq([[400,400,'triangle',0.1,0.11,0],[300,300,'triangle',0.16,0.1,0.09]]); }}
+    ]},
+    {cat:'Сообщения и прочее', items:[
+      {name:'Получено (поп)', desc:'Пузырёк входящего.', p:{type:'sine',f1:240,f2:620,dur:120,vol:0.12}},
+      {name:'Пузырь', desc:'Короткий «блуп».', p:{type:'sine',f1:420,f2:900,dur:90,vol:0.11}},
+      {name:'Свайп', desc:'Короткий смахивающий шелест.', play:function(){ swoosh(false,0.18,0.1); }},
+      {name:'Открыть', desc:'Восходящий тон — раскрытие.', p:{type:'sine',f1:300,f2:720,dur:140,vol:0.09}},
+      {name:'Закрыть', desc:'Нисходящий тон — сворачивание.', p:{type:'sine',f1:720,f2:300,dur:140,vol:0.09}}
+    ]}
+  ];
+
+  var root=document.getElementById('root'), num=0;
+  DATA.forEach(function(group){
+    var h=document.createElement('div'); h.className='cat'; h.textContent=group.cat; root.appendChild(h);
+    var grid=document.createElement('div'); grid.className='grid';
+    group.items.forEach(function(s){
+      num++;
+      var card=document.createElement('div'); card.className='card';
+      var editBtn = s.p ? '<button class="btn ghost editb">✎</button>' : '';
+      card.innerHTML='<div class="num">ЗВУК '+num+'</div><div class="name">'+s.name+'</div><div class="desc">'+s.desc+'</div>'+
+        '<div class="row"><button class="btn primary playb"><svg viewBox="0 0 24 24" fill="none"><path d="M7 5l12 7-12 7V5z" fill="#fff"/></svg> Прослушать</button>'+editBtn+'</div>';
+      card.querySelector('.playb').addEventListener('click',function(){ try{ s.p? playParams(s.p) : s.play(); }catch(e){} });
+      if(s.p){ card.querySelector('.editb').title='Загрузить в конструктор'; card.querySelector('.editb').addEventListener('click',function(){ loadToBuilder(s.p); }); }
+      grid.appendChild(card);
+    });
+    root.appendChild(grid);
+  });
+</script>
+</body>
+</html>
